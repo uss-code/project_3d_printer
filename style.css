@@ -1,0 +1,245 @@
+
+    :root {
+      --bg: #f6f6fb;
+      --card: #ffffff;
+      --ink: #1f2341;
+      --muted: #6b6f86;
+      --ring: #e5e7f2;
+      --primary: #5b43d6;
+      --ok: #25c17e;
+      /* ใช้งาน (เขียว) */
+      --idle: #ff6b6b;
+      /* ว่าง/ไม่ใช้งาน (แดง) */
+      --shadow: 0 10px 24px rgba(31, 35, 65, .08);
+    }
+
+    body.dark {
+      --bg: #0f1222;
+      --card: #171a2e;
+      --ink: #eef0ff;
+      --muted: #a7abca;
+      --ring: #2a2e47;
+      --primary: #8e7bff;
+      --shadow: 0 10px 28px rgba(0, 0, 0, .45);
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    header {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      background: linear-gradient(90deg, #3b2f74, #5b43d6);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .05s ease, opacity .15s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .btn:active {
+      transform: translateY(1px)
+    }
+
+    .btn-ghost {
+      background: #ffffff25;
+      color: #fff;
+      border: 1px solid #ffffff55
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 12px;
+      border: 1px solid var(--ring);
+      background: var(--card);
+      color: var(--muted)
+    }
+
+    /* Grid & Card */
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr))
+    }
+
+    .card {
+    height: 150px;
+      background: var(--card);
+      border: 1px solid var(--ring);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+    }
+
+    .card .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px
+    }
+
+    .title {
+      font-weight: 800;
+      font-size: 18px
+    }
+
+    .subtitle {
+      font: size 20px;
+      color: var(--muted)
+    }
+
+    .status-chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 12px;
+      border: 1px solid var(--ring);
+      background: #fff1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .status-chip.in-use {
+      color: var(--ok);
+      border-color: color-mix(in srgb, var(--ok) 40%, var(--ring))
+    }
+
+    .status-chip.idle {
+      color: var(--idle);
+      border-color: color-mix(in srgb, var(--idle) 40%, var(--ring))
+    }
+
+    .status-chip.offline {
+      color: var(--muted)
+    }
+
+    /* Progress */
+    .bar {
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--ring);
+      background: #e9ecf7
+    }
+
+    body.dark .bar {
+      background: #212540
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%
+    }
+
+    .in-use .fill {
+      background: var(--ok)
+    }
+
+    .idle .fill {
+      background: var(--idle)
+    }
+
+    .offline .fill {
+      background: linear-gradient(90deg, #999 20%, #ccc 40%, #999 60%);
+      background-size: 200% 100%;
+      animation: s 1s linear infinite
+    }
+
+    @keyframes s {
+      to {
+        background-position: -200% 0
+      }
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .btn-mini {
+      background: transparent;
+      border: 1px solid var(--ring);
+      color: var(--ink);
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    .btn-mini:hover {
+      border-color: var(--primary)
+    }
+
+    .ghost {
+      opacity: .65
+    }
+
+    .footer-note {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    a {
+      color: inherit
+    }
+
+    .testBtn {
+        background-color: gray;
+    }

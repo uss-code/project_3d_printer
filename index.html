@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8">
+  <title>3D Printer Status – Unified</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <script src="printer.js" defer></script>
+</head>
+
+<body>
+  <header>
+    <h1>สถานะเครื่องพิมพ์ 3D</h1>
+    <div class="actions">
+      <button class="btn btn-ghost" id="darkBtn">🌙 สลับโหมด</button>
+  </header>
+
+  <div class="container">
+    <div class="toolbar">
+      <span class="chip">🟢 กำลังใช้งาน = เขียว</span>
+      <span class="chip">🔴 ว่าง/ไม่ใช้งาน = แดง</span>
+      <span class="chip ghost">⚠️ ไม่เชื่อมต่อ = ขาว/เทา</span>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    
+  </div>
+
+
+</body>
+
+</html>
