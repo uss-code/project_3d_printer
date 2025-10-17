@@ -22,7 +22,7 @@
     <div class="card idle" id="dev-${d.number}">
       <div class="head">
         <div>
-          <div class="subtitle">หมายเลข: ${d.number}</div>
+          <div class="subtitle">เครื่องที่: ${d.number}</div>
         </div>
         <div class="status-chip idle" data-chip>🔴 ว่าง/ไม่ใช้งาน</div>
       </div>
