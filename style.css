@@ -1,65 +1,187 @@
+/* __________________________
+   THEME TOKENS
+__________________________ */
 :root{
-  --bg:#f6f6fb;
-  --card:#fff;
-  --ink:#1f2341;
-  --muted:#6b6f86;
-  --ring:#e5e7f2;
+  /* Light */
+  --bg:#f5f7fb;
+  --bg-soft:#eef1f7;
+  --card:#ffffffdd;
+  --ink:#192036;
+  --muted:#707694;
+  --ring:#e5e8f2;
   --primary:#5b43d6;
-  --ok:#25c17e;      /* ใช้งาน */
-  --idle:#ff6b6b;    /* ไม่ได้ใช้ */
-  --shadow:0 10px 24px rgba(31,35,65,.08);
+  --primary-weak:#efeaff;
+  --ok:#20c082;
+  --ok-weak:#dff8ee;
+  --idle:#ff6b6b;
+  --idle-weak:#ffe8e8;
+  --shadow:0 12px 30px rgba(22, 25, 55, .08);
+  --blur: 10px;
+  --radius: 18px;
+  --radius-pill: 999px;
+  --trans: 220ms cubic-bezier(.2,.7,.2,1);
 }
 
+body.dark{
+  /* Dark */
+  --bg:#0e1117;
+  --bg-soft:#131826;
+  --card:#0f1422cc;
+  --ink:#e7ebff;
+  --muted:#9aa3c7;
+  --ring:#1e2740;
+  --primary:#7c6cf3;
+  --primary-weak:#1b2140;
+  --ok:#24d096;
+  --ok-weak:#0f2b20;
+  --idle:#ff7e7e;
+  --idle-weak:#371f25;
+  --shadow:0 18px 40px rgba(0,0,0,.35);
+  --blur: 12px;
+}
+
+/* __________________________
+   BASE
+__________________________ */
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
+html{color-scheme:light dark}
 body{
-  background:var(--bg);
+  background:radial-gradient(1200px 800px at 10% -10%, var(--bg-soft), transparent) ,
+             radial-gradient(1000px 700px at 90% -20%, var(--primary-weak), transparent) ,
+             var(--bg);
   color:var(--ink);
-  font:16px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+  font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+  transition: background var(--trans), color var(--trans);
 }
 
+a,button{transition: all var(--trans)}
+button:focus-visible{outline:3px solid color-mix(in oklab, var(--primary) 45%, white); outline-offset:2px; border-radius:12px}
+
+/* __________________________
+   HEADER
+__________________________ */
 .site-header{
-  max-width:1100px;margin:32px auto 16px;padding:0 16px;
+  max-width:1200px;margin:40px auto 16px;padding:0 20px;
 }
 .site-header h1{
-  margin:0 0 8px;font-size:28px;letter-spacing:.3px;
+  margin:0 0 10px;
+  font-size:clamp(26px, 3vw, 36px);
+  letter-spacing:.3px;
+  font-weight:800;
 }
 .site-header .sub{
-  display:flex;gap:10px;align-items:center;color:var(--muted);flex-wrap:wrap;
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  color:var(--muted);
 }
-.dot{opacity:.5}
+.spacer{flex:1}
+.dot{opacity:.6}
 
-.container{max-width:1100px;margin:0 auto;padding:0 16px 32px}
+/* __________________________
+   BUTTONS
+__________________________ */
+.btn{
+  background:var(--card);
+  color:var(--ink);
+  border:1px solid var(--ring);
+  border-radius:12px;
+  padding:.55rem .9rem;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  backdrop-filter: blur(var(--blur));
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+
+.btn.accent{
+  background:var(--primary);
+  color:#fff;
+  border-color:transparent;
+}
+.btn.accent:hover{filter:brightness(1.05)}
+
+.mode-switch{display:flex;gap:8px;align-items:center}
+.mode-btn{
+  padding:.45rem .8rem;
+  border:1px solid var(--ring);
+  border-radius:10px;
+  background:var(--card);
+  color:var(--ink);
+  cursor:pointer;
+  backdrop-filter: blur(var(--blur));
+}
+.mode-btn.is-active{
+  background:var(--primary);
+  color:#fff;
+  border-color:var(--primary);
+}
+
+.icon-btn{
+  display:inline-grid;place-items:center;
+  width:38px;height:38px;border-radius:12px;
+  border:1px solid var(--ring);
+  background:var(--card);
+  cursor:pointer;
+  box-shadow:var(--shadow);
+}
+
+/* __________________________
+   LAYOUT
+__________________________ */
+.container{max-width:1200px;margin:0 auto;padding:0 20px 40px}
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:16px;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:18px;
 }
 
+/* __________________________
+   CARD
+__________________________ */
 .card{
-  background:var(--card);border:1px solid var(--ring);
-  border-radius:16px;box-shadow:var(--shadow);
-  padding:16px;display:flex;flex-direction:column;gap:10px;
+  background:var(--card);
+  border:1px solid var(--ring);
+  border-radius:var(--radius);
+  padding:18px 18px 16px;
+  display:flex;flex-direction:column;gap:12px;
+  box-shadow:var(--shadow);
+  backdrop-filter: blur(var(--blur));
+  transform:translateZ(0);
+  transition: transform var(--trans), box-shadow var(--trans), background var(--trans), border-color var(--trans);
 }
-.card h3{margin:0;font-size:20px}
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow: 0 24px 60px rgba(40,44,80,.18);
+}
+.card h3{margin:0;font-size:20px; font-weight:800; letter-spacing:.2px}
+
+/* __________________________
+   STATUS BADGE
+__________________________ */
 .badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px;
+  display:inline-flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:var(--radius-pill);
+  font-weight:700;font-size:14px;
+  border:1px solid var(--ring);
+  background:var(--bg-soft);
 }
-.badge.ok{background:rgba(37,193,126,.12);color:var(--ok);border:1px solid rgba(37,193,126,.35)}
-.badge.idle{background:rgba(255,107,107,.12);color:var(--idle);border:1px solid rgba(255,107,107,.4)}
+.badge .dot{
+  width:.64rem;height:.64rem;border-radius:50%;
+  display:inline-block; background:currentColor; filter:saturate(1.1);
+  box-shadow:0 0 0 2px color-mix(in oklab, currentColor 24%, transparent);
+}
+.badge.ok{background:var(--ok-weak);color:var(--ok);border-color:color-mix(in oklab, var(--ok) 25%, var(--ring))}
+.badge.idle{background:var(--idle-weak);color:var(--idle);border-color:color-mix(in oklab, var(--idle) 25%, var(--ring))}
+
+/* __________________________
+   META / TEXT
+__________________________ */
 .meta{color:var(--muted);font-size:12px}
 
-.site-footer{
-  max-width:1100px;margin:0 auto 40px;padding:0 16px;display:flex;flex-direction:column;gap:10px;color:var(--muted);
+/* __________________________
+   REDUCE MOTION
+__________________________ */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important}
 }
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-input[type="url"]{
-  min-width:320px;flex:1;
-  padding:8px 10px;border:1px solid var(--ring);border-radius:10px;background:#fff;color:var(--ink)
-}
-.btn{
-  background:var(--primary);color:#fff;border:0;border-radius:10px;padding:8px 12px;cursor:pointer;
-}
-.btn:active{transform:translateY(1px)}

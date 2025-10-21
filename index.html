@@ -10,25 +10,26 @@
   <header class="site-header">
     <h1>3D Printer Status</h1>
     <div class="sub">
-      <span id="sheetName">—</span>
+      <span id="sheetName"></span>
       <span class="dot">•</span>
       <span>อัปเดตล่าสุด: <time id="updatedAt">—</time></span>
-      <button id="refreshBtn" class="btn">รีเฟรช</button>
+
+      <div class="spacer"></div>
+
+      <button id="refreshBtn" class="btn accent">รีเฟรช</button>
+
+      <div class="mode-switch">
+        <button class="mode-btn" data-mode="thai" title="แปลสถานะเป็นภาษาไทย">ไทย</button>
+        <button class="mode-btn" data-mode="sheet" title="แสดงตามที่ชีตกำหนด">Eng</button>
+      </div>
+
+      <button id="themeToggle" class="icon-btn" aria-label="Toggle theme" title="สลับโหมดแสง/มืด">🌙</button>
     </div>
   </header>
 
   <main class="container">
     <div id="grid" class="grid"></div>
   </main>
-
-  <footer class="site-footer">
-    <label class="row">
-      API URL:
-      <input id="apiUrl" type="url" placeholder="วาง Google Apps Script Web App URL ที่นี่" />
-      <button id="saveApi" class="btn">บันทึก</button>
-    </label>
-    <small>เคล็ดลับ: ตั้งหัวตาราง (Row 1) เป็นหมายเลข/ชื่อเครื่อง — ย้ายคอลัมน์ได้อิสระ</small>
-  </footer>
 
   <script src="./script.js"></script>
 </body>
