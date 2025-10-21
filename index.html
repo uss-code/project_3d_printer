@@ -1,33 +1,35 @@
 <!doctype html>
 <html lang="th">
-
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>3D Printer Status – Unified</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="style.css">
-  <script src="printer.js" defer></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="./style.css" rel="stylesheet" />
 </head>
-
 <body>
-  <header>
-    <h1>สถานะเครื่องพิมพ์ 3D</h1>
-    <div class="actions">
-      <button class="btn btn-ghost" id="darkBtn">🌙 สลับโหมด</button>
+  <header class="site-header">
+    <h1>3D Printer Status</h1>
+    <div class="sub">
+      <span id="sheetName">—</span>
+      <span class="dot">•</span>
+      <span>อัปเดตล่าสุด: <time id="updatedAt">—</time></span>
+      <button id="refreshBtn" class="btn">รีเฟรช</button>
+    </div>
   </header>
 
-  <div class="container">
-    <div class="toolbar">
-      <span class="chip">🟢 กำลังใช้งาน = เขียว</span>
-      <span class="chip">🔴 ว่าง/ไม่ใช้งาน = แดง</span>
-      <span class="chip ghost">⚠️ ไม่เชื่อมต่อ = ขาว/เทา</span>
-    </div>
+  <main class="container">
+    <div id="grid" class="grid"></div>
+  </main>
 
-    <div class="grid" id="grid"></div>
-    
-  </div>
+  <footer class="site-footer">
+    <label class="row">
+      API URL:
+      <input id="apiUrl" type="url" placeholder="วาง Google Apps Script Web App URL ที่นี่" />
+      <button id="saveApi" class="btn">บันทึก</button>
+    </label>
+    <small>เคล็ดลับ: ตั้งหัวตาราง (Row 1) เป็นหมายเลข/ชื่อเครื่อง — ย้ายคอลัมน์ได้อิสระ</small>
+  </footer>
 
-
+  <script src="./script.js"></script>
 </body>
-
 </html>

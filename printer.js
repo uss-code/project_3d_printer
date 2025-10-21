@@ -1,178 +1,97 @@
- /* ===== กำหนดรายการเครื่อง (แก้ให้ตรงระบบจริงของคุณ) ===== */
-    const DEVICES = [
-      { number: "01", url: "http://192.168.0.101/status" },
-      { number: "02", url: "http://192.168.0.102/status" },
-      { number: "03", url: "http://192.168.0.103/status" },
-      { number: "04", url: "http://192.168.0.104/status" },
-      { number: "05", url: "http://192.168.0.105/status" },
-      { number: "06", url: "http://192.168.0.106/status" },
-      { number: "07", url: "http://192.168.0.107/status" },
-      { number: "08", url: "http://192.168.0.108/status" },
-      { number: "09", url: "http://192.168.0.109/status" },
-      { number: "10", url: "http://192.168.0.110/status" },
-      { number: "11", url: "http://192.168.0.111/status" },
-      { number: "12", url: "http://192.168.0.112/status" }
-    ];
+// ======= ตั้งค่า =======
+// วาง URL จาก Google Apps Script Web App ที่นี่ หรือวางในช่องท้ายหน้าเว็บแล้วกด "บันทึก"
+const DEFAULT_API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'; // เช่น https://script.google.com/macros/s/xxxx/exec
+const AUTO_REFRESH_MS = 30_000; // รีเฟรชอัตโนมัติทุก 30 วิ (ปรับได้)
 
-    /* ====== ตัวช่วย UI ====== */
-    const grid = document.getElementById('grid');
-
-    function cardTemplate(d) {
-      return `
-    <div class="card idle" id="dev-${d.number}">
-      <div class="head">
-        <div>
-          <div class="subtitle">เครื่องที่: ${d.number}</div>
-        </div>
-        <div class="status-chip idle" data-chip>🔴 ว่าง/ไม่ใช้งาน</div>
-      </div>
-      <div class="subtitle" data-msg>รอสถานะ...</div>
-    </div>
-  `;
-    }
-
-    /* วาดการ์ดเริ่มต้น */
-    grid.innerHTML = DEVICES.map(cardTemplate).join('');
-
-    /* ====== ฟังก์ชันเรียก API สถานะ ======
-       คาดหวัง payload ตัวอย่าง:
-       { "status": "in-use" | "idle", "progress": 0..100 }
-    */
-    async function fetchStatus(device) {
-      const res = await fetch(device.url, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json();
-    }
-
-    /* ====== ฟังก์ชันส่งคำสั่งเปลี่ยนสถานะ (ถ้าระบบคุณรองรับ) ======
-       POST ไปยัง /status ด้วย body: {status: 'in-use'|'idle'}
-       ปรับ endpoint/วิธีตามระบบจริงได้เลย
-    */
-    async function sendStatus(device, next) {
-      const res = await fetch(device.url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: next })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json().catch(() => ({})); // เผื่อ API ไม่คืนค่า
-    }
-
-    /* ====== อัปเดตการ์ดเดี่ยว ====== */
-    function renderCard(device, payload) {
-      const card = document.getElementById(`dev-${device.number}`);
-      const chip = card.querySelector('[data-chip]');
-      const fill = card.querySelector('[data-fill]');
-      const msg = card.querySelector('[data-msg]');
-
-      let status = 'idle';
-      if (payload && payload.status === 'in-use') status = 'in-use';
-      if (payload && payload.status === 'idle') status = 'idle';
-
-      const pct = Math.max(0, Math.min(100, Number(payload?.progress ?? (status === 'in-use' ? 50 : 0))));
-
-      card.classList.remove('in-use', 'idle', 'offline');
-      chip.classList.remove('in-use', 'idle', 'offline');
-
-      card.classList.add(status ? status : 'offline');
-      chip.classList.add(status ? status : 'offline');
-
-      if (status === 'in-use') {
-        chip.textContent = '🟢 กำลังใช้งาน';
-      } else if (status === 'idle') {
-        chip.textContent = '🔴 ว่าง/ไม่ใช้งาน';
-      } else {
-        chip.textContent = '⚠️ ไม่เชื่อมต่อ';
-      }
-
-      fill.style.width = pct + '%';
-      msg.textContent = (status === 'in-use')
-        ? `สถานะ: กำลังพิมพ์ `
-        : (status === 'idle')
-          ? `สถานะ: ว่าง · พร้อมเริ่มงาน`
-          : `สถานะ: ไม่เชื่อมต่อ`;
-    }
-
-    /* ====== วนดึงสถานะทุก 5 วิ ====== */
-    async function refreshAll() {
-      for (const d of DEVICES) {
-        try {
-          const data = await fetchStatus(d);
-          renderCard(d, data);
-        } catch (e) {
-          renderCard(d, { status: 'offline', progress: 0 });
-        }
-      }
-    }
-    refreshAll();
-    const timer = setInterval(refreshAll, 5000);
-
-    /* ====== จัดการคลิกปุ่มบนการ์ด (event delegation) ====== */
-    grid.addEventListener('click', async (ev) => {
-      const card = ev.target.closest('.card');
-      if (!card) return;
-      const id = card.id.replace('dev-', '');
-      const device = DEVICES.find(x => x.number === id);
-      if (!device) return;
-
-      const isToggle = ev.target.matches('[data-toggle]');
-      const isSetInUse = ev.target.matches('[data-set-inuse]');
-      const isSetIdle = ev.target.matches('[data-set-idle]');
-
-      if (!(isToggle || isSetInUse || isSetIdle)) return;
-
-      const chip = card.querySelector('[data-chip]');
-      const current = chip.classList.contains('in-use') ? 'in-use'
-        : chip.classList.contains('idle') ? 'idle' : 'offline';
-      const next = isToggle ? (current === 'in-use' ? 'idle' : 'in-use')
-        : isSetInUse ? 'in-use'
-          : 'idle';
-
-      // แสดง Optimistic UI
-      renderCard(device, { status: next, progress: next === 'in-use' ? 1 : 0 });
-
-      try {
-        await sendStatus(device, next);
-        // ดึงจริงอีกครั้งเพื่อความชัวร์
-        const real = await fetchStatus(device);
-        renderCard(device, real);
-      } catch (e) {
-        // ย้อนกลับด้วยการรีเฟรชสถานะจริง
-        try {
-          const real = await fetchStatus(device);
-          renderCard(device, real);
-          alert(`ไม่สำเร็จ: ${e.message}`);
-        } catch {
-          renderCard(device, { status: 'offline', progress: 0 });
-          alert('ไม่สามารถเชื่อมต่ออุปกรณ์ได้');
-        }
-      }
-    });
-
-    /* ====== สลับ Dark Mode ====== */
-    document.getElementById('darkBtn').addEventListener('click', () => {
-      document.body.classList.toggle('dark');
-      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-    });
-    (function () {
-      const saved = localStorage.getItem('theme');
-      if (saved === 'dark') document.body.classList.add('dark');
-    })();
-
-function init() {
-    /* วาดการ์ดเริ่มต้น */
-    grid.innerHTML = DEVICES.map(cardTemplate).join('');
+// ======= Util เก็บ/อ่านค่า URL ใน localStorage =======
+const storageKey = 'printer_api_url';
+function getApiUrl() {
+  return localStorage.getItem(storageKey) || DEFAULT_API_URL || '';
+}
+function setApiUrl(url) {
+  localStorage.setItem(storageKey, url);
 }
 
+// ======= DOM =======
+const gridEl = document.getElementById('grid');
+const updatedEl = document.getElementById('updatedAt');
+const sheetNameEl = document.getElementById('sheetName');
+const apiUrlInput = document.getElementById('apiUrl');
+const saveApiBtn = document.getElementById('saveApi');
+const refreshBtn = document.getElementById('refreshBtn');
 
-function switch_mode() {
-    if (document.getElementById("testBtn").style.backgroundColor == "blue") {
-        document.getElementById("testBtn").style.backgroundColor = "gray"
-    } else {
-        document.getElementById("testBtn").style.backgroundColor = "blue";
-    }    
+// ======= การแมปสถานะเป็น UI =======
+function renderBadge(isActive, raw) {
+  const cls = isActive ? 'ok' : 'idle';
+  const label = isActive ? 'ใช้งาน' : (raw?.trim() || 'ไม่ได้ใช้');
+  return `<span class="badge ${cls}">
+            <span class="dot">●</span>${escapeHtml(label)}
+          </span>`;
 }
 
+function card(printer) {
+  return `<article class="card">
+    <h3>เครื่อง ${escapeHtml(printer.id)}</h3>
+    ${renderBadge(printer.isActive, printer.status)}
+    <div class="meta">คอลัมน์: ${printer.col}</div>
+  </article>`;
+}
 
+// ======= Fetch + Render =======
+async function loadAndRender() {
+  const api = getApiUrl();
+  if (!api) {
+    gridEl.innerHTML = `<p class="meta">ยังไม่ได้ตั้งค่า API URL</p>`;
+    return;
+  }
 
+  try {
+    const res = await fetch(api, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
 
+    sheetNameEl.textContent = json.sheet || '—';
+    updatedEl.textContent = json.updatedAt ? new Date(json.updatedAt).toLocaleString() : '—';
+
+    if (!json.ok || !Array.isArray(json.data)) {
+      gridEl.innerHTML = `<p class="meta">รูปแบบข้อมูลไม่ถูกต้อง</p>`;
+      return;
+    }
+
+    // เรียงตาม id ที่เป็นตัวเลข ถ้าไม่ใช่ ปล่อยตามลำดับคอลัมน์
+    const data = json.data.slice();
+    const numericAll = data.every(d => /^\d+$/.test(String(d.id).trim()));
+    if (numericAll) {
+      data.sort((a, b) => Number(a.id) - Number(b.id));
+    }
+
+    gridEl.innerHTML = data.map(card).join('');
+
+  } catch (err) {
+    console.error(err);
+    gridEl.innerHTML = `<p class="meta">โหลดข้อมูลไม่ได้: ${escapeHtml(err.message)} <br/>ตรวจสอบว่าได้ Deploy Apps Script เป็น Web App และตั้งค่า "Anyone" แล้ว</p>`;
+  }
+}
+
+// ======= Helpers =======
+function escapeHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+// ======= Events/Init =======
+apiUrlInput.value = getApiUrl();
+saveApiBtn.addEventListener('click', () => {
+  const val = apiUrlInput.value.trim();
+  if (!val) return;
+  setApiUrl(val);
+  loadAndRender();
+});
+
+refreshBtn.addEventListener('click', loadAndRender);
+loadAndRender();
+setInterval(loadAndRender, AUTO_REFRESH_MS);
